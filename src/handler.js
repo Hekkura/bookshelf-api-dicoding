@@ -50,10 +50,10 @@ const addBookHandler = (request, h) => {
         updatedAt,
     };
 
-    notes.push(newBook);
+    books.push(newBook);
 
     const isSuccess = books.filter((book)=> book.id === id).length > 0;
-    
+
     //Success (201)
     if (isSuccess) {
         const response = h.response({
