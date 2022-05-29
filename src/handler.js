@@ -12,6 +12,25 @@ const addBookHandler = (request, h) => {
             readPage,
             reading } = request.payload;
 
+            const id = nanoid(16);
+            const insertedAt = new Date().toISOString();
+            const updatedAt = insertedAt;
+            const finished = (pageCount === readPage);
+            const newBook = {
+                id,
+                name,
+                year,
+                author,
+                summary,
+                publisher,
+                pageCount,
+                readPage,
+                finished,
+                reading,
+                insertedAt,
+                updatedAt,
+            };
+
     //Respons Gagal (400) jika Client tidak melampirkan Name pada request body.
     if (name === undefined) {
         const response = h.response({
@@ -25,33 +44,14 @@ const addBookHandler = (request, h) => {
     if (readPage > pageCount) {
         const response = h.response({
             status: 'fail',
-            message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount.',
+            message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
         });
         response.code(400);
         return response;
     };
 
-    const id = nanoid(16);
-    const insertedAt = new Date().toISOString();
-    const updatedAt = insertedAt;
-    const finished = (pageCount === readPage);
-    const newBook = {
-        id,
-        name,
-        year,
-        author,
-        summary,
-        publisher,
-        pageCount,
-        readPage,
-        finished,
-        reading,
-        insertedAt,
-        updatedAt,
-    };
-
-    books.push(newBook);
-
+    
+    books.push(newBook); 
     const isSuccess = books.filter((book)=> book.id === id).length > 0;
 
     //Success (201)
@@ -82,27 +82,28 @@ const addBookHandler = (request, h) => {
 const getAllBooksHandler = () => ({
     status: 'success',
     data: {
-        books,
+        books:books.map((book)=> ({
+            id: book.id,
+            name: book.name,
+            publisher: book.publisher,
+        })),
     },
 });
 
 //Menampilkan buku sesuai Id / getbyId
 const getBookByIdHandler = (request, h) => {
     const { id } = request.params;
-    const book = books.findIndex((n) => n.id === id)[0];
+    const book = books.filter((n) => n.id === id)[0];
 
     //buku ditemukan sesuai ID
     if(book !== undefined){
-        const response = h.response ({
+        return {
             status: 'success',
             data: {
                 book,
             },
-        });
-        response.code(200);
-        return response;
-    };
-
+        };
+    }
     //buku not found (404)
     const response = h.response({
         status: 'fail',
