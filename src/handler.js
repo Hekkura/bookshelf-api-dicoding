@@ -126,10 +126,9 @@ const editBookByIdHandler = (request, h) => {
         readPage,
         reading } = request.payload;
     const updatedAt = new Date().toISOString();
-    const index = books.findIndex((book) => book.id === id);
-
     
-
+    //finished jika pageCount === readPage
+    const finished = (pageCount === readPage);
 
     //Tidak ada name pada request body (400)
     if (name === undefined) {
@@ -151,6 +150,7 @@ const editBookByIdHandler = (request, h) => {
         return response;
     };
 
+    const index = books.findIndex((book) => book.id === id);
 
     //berhasil diperbarui
     if(index !== -1) {
